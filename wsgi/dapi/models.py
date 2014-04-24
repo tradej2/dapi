@@ -11,6 +11,7 @@ from taggit.managers import TaggableManager
 from social.apps.django_app.default import models as social_models
 
 from daploader import dapver
+import copy
 
 
 class MetaDap(models.Model):
@@ -206,13 +207,12 @@ class Profile(models.Model):
             return None
         return url.format(username=username)
 
-    def fedora_username(self):
-        '''If the user uses Fedora to login, return his FAS username'''
-        return self.get_social_username('fedora')
 
-    def github_username(self):
-        '''If the user uses Github to login, return his Github username'''
-        return self.get_social_username('github')
+for backend in 'github fedora'.split():
+    def tmp(self):
+        '''If the user uses ''' + backend + ''' to login, return his ''' + backend + '''username'''
+        return self.get_social_username(backend)
+    setattr(Profile, backend + '_username', copy.copy(tmp))
 
 
 @receiver(post_delete, sender=Dap)
